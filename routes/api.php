@@ -18,9 +18,6 @@ use App\Http\Controllers\BookController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/ebook','App\Http\Controllers\BookController@index');
-Route::post('/ebook', 'App\Http\Controllers\BookController@create');
-Route::put('/ebook/{id}', 'App\Http\Controllers\BookController@update');
-Route::delete('/ebook/{id}', 'App\Http\Controllers\BookController@delete');
 
+Route::resource('ebook', BookController::class);
  
