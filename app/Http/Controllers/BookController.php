@@ -3,24 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
-use App\Http\Controllers\Controller;
 use App\Models\Book;
-
 class BookController extends Controller
 {
-    public function index(){
-       $book = Book::all(); 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $book = Book::all(); 
 
-       return [
-        'status' => 'loaded',   
-        'data' => $book
-       ];
-         
- 
+       if($book->count() == 0){
+        return [
+            'status' => 404,
+            'message' => 'No Data'
+           ];
+       }else{
+         return [
+          
+            'status' => 200, 
+            'message' => 'loaded',   
+            'data' => $book
+          ]; 
+       }
     }
-    public function create(Request $request){
-         $request->validate([
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
             
             'title' => 'required',
             'description' => 'required',
@@ -32,27 +49,59 @@ class BookController extends Controller
 
         Book::create($request->all());
         $data = Book::all()->last();
-        return Response::json([   
+        return [
+            'status' => 'created', 
+            'data' => $data
+        ];  
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $request->validate([
+            
+            'title' => 'required',
+            'description' => 'required',
+            'author' => 'required',
+            'publisher' => 'required',
+            'date_of_issue' => 'required'
+
+        ]);
+
+        Book::create($request->all());
+        $data = Book::all()->last();
+        return [
             'status' => 'created', 
             'data' => $data 
-        ]); 
+        ]
+        ;
     }
-    public function show($id){
-        $data = Book::find($id);
-        if($book){
-            return[ 
-            'status' => '200',
-            'Message' => 'Data showed',
-            'data' => $data 
-            ];
-        }else{
-            return[
-              'status' => '404',
-              'message' => 'not found'  
-            ];
-        }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
-    public function update(Request $request, Book $book, $id){ 
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
         $request->validate([
             
             'title' => 'required',
@@ -65,17 +114,41 @@ class BookController extends Controller
         $book = Book::find($id);
         $book->update($request->all());
         $data = Book::latest('updated_at')->first();
-        return Response::json([ 
-            'status' => 'Data Edited Successfully',
-            'data' => $data
-
-        ]); 
+        if($book){
+            return [
+                'status' => 'Data Edited Successfully',
+                'data' => $data
+            ];
+        }else{
+            return [
+            'status' => '404',
+            'message' => 'not found'
+            ];
+            
+        };
     }
-    public function delete(Book $book, $id){
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
         $book = Book::find($id);
         $book->delete();
-        return Response::json([ 
-            'status' => 'data deleted'
-        ]); 
+        if($book){
+            return[
+                'status' => 200,
+                'message' => 'data deleted' 
+
+            ];
+        } else{
+            return[
+                'status' => 404,
+                'message' => 'not found'
+            ];
+        }
     }
 }
