@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookController; 
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\AuthorController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +27,5 @@ Route::get('/me','App\Http\Controllers\AuthController@me');
 // Route::delete('/ebook/{id}', 'App\Http\Controllers\BookController@delete');
 
 Route::resource('ebook', BookController::class);
+Route::resource('author', AuthorController::class);
  
